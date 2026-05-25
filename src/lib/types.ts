@@ -1,9 +1,18 @@
 export type Urgency = 'low' | 'medium' | 'high' | 'critical';
+export type MessageRole = 'user' | 'assistant' | 'system';
+export type MessageType = 'log' | 'suggestion' | 'alert' | 'create' | 'summary';
 
-export interface ProgressLog {
+export interface Message {
   id: string;
   projectId: string;
+  role: MessageRole;
   content: string;
+  type: MessageType;
+  metadata?: {
+    progressBefore?: number;
+    progressAfter?: number;
+    parsedIntent?: string;
+  };
   timestamp: number;
 }
 
@@ -12,17 +21,20 @@ export interface Project {
   name: string;
   description: string;
   urgency: Urgency;
-  deadline: string | null; // ISO date string or null
+  deadline: string | null;
   createdAt: number;
   updatedAt: number;
   completed: boolean;
   completedAt: number | null;
-  manualProgress: number | null; // 0-100, null means auto
+  manualProgress: number | null;
+  pinned: boolean;
+  lastMessagePreview: string;
+  lastMessageAt: number;
 }
 
 export interface AppData {
   projects: Project[];
-  logs: ProgressLog[];
+  messages: Message[];
 }
 
 export interface SmartTask {
