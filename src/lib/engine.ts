@@ -1,5 +1,5 @@
 import type { Project, SmartTask, Urgency } from './types';
-import { getLogsForProject } from './storage';
+import { getMessagesForProject } from './storage';
 
 const DAY = 86400000;
 const URGENCY_WEIGHT: Record<Urgency, number> = {
@@ -11,14 +11,6 @@ const URGENCY_WEIGHT: Record<Urgency, number> = {
 
 // ---- Auto Progress Estimation ----
 
-/**
- * Estimate project progress (0-100) based on log activity.
- * No manual sub-tasks needed — the system infers progress from activity patterns.
- */
-/**
- * Get auto-estimated progress for a project.
- * Also exported as `getProgress` for convenience.
- */
 export function getProgress(project: Project): number {
   return estimateProgress(project);
 }
@@ -29,18 +21,18 @@ export function estimateProgress(project: Project): number {
   }
   if (project.completed) return 100;
 
-  const logs = getLogsForProject(project.id);
-  const logCount = logs.length;
+  const messages = getMessagesForProject(project.id);
+  const logMessages = messages.filter((m) => m.type === 'log');
+  const logCount = logMessages.length;
 
   if (logCount === 0) return 0;
 
   // Base progress from log count (diminishing returns)
-  // 1 log ~ 10%, 3 logs ~ 25%, 5 logs ~ 35%, 10 logs ~ 50%, 20+ logs ~ 70%
   const logProgress = 100 * (1 - Math.exp(-logCount * 0.15));
 
   // Recency boost — recent activity means momentum
   const now = Date.now();
-  const mostRecentLog = logs[0];
+  const mostRecentLog = logMessages[logMessages.length - 1];
   const daysSinceLastActivity = mostRecentLog
     ? (now - mostRecentLog.timestamp) / DAY
     : 999;
@@ -68,10 +60,9 @@ export function estimateProgress(project: Project): number {
   // Blend: log progress weighted more heavily, but deadline creates a soft ceiling
   let finalProgress = logProgress * recencyMultiplier;
 
-  // If we have a deadline, progress shouldn't wildly differ from elapsed time
   if (deadlineProgress > 0) {
     // Pull progress toward the elapsed-time estimate (soft constraint)
-    const blend = 0.3; // 30% deadline influence
+    const blend = 0.3;
     finalProgress = finalProgress * (1 - blend) + deadlineProgress * blend;
   }
 
@@ -80,24 +71,20 @@ export function estimateProgress(project: Project): number {
 
 // ---- Smart Task Ranking ----
 
-/**
- * Rank all active projects by "what you should work on now".
- * Factors:
- * - Manual urgency
- * - Days since last activity (stale projects need attention)
- * - Deadline proximity
- * - Total activity (new projects need a kick-start)
- */
 export function generateSmartTasks(projects: Project[]): SmartTask[] {
   const now = Date.now();
 
   const scored = projects
     .filter((p) => !p.completed)
     .map((project) => {
-      const logs = getLogsForProject(project.id);
-      const lastActivity = logs[0]?.timestamp ?? project.createdAt;
+      const messages = getMessagesForProject(project.id);
+      const logMessages = messages.filter((m) => m.type === 'log');
+      const lastActivity =
+        messages.length > 0
+          ? messages[messages.length - 1].timestamp
+          : project.createdAt;
       const daysSinceActivity = (now - lastActivity) / DAY;
-      const logCount = logs.length;
+      const logCount = logMessages.length;
       const progress = estimateProgress(project);
 
       // --- Score Components ---
@@ -106,7 +93,6 @@ export function generateSmartTasks(projects: Project[]): SmartTask[] {
       const urgencyScore = URGENCY_WEIGHT[project.urgency];
 
       // 2. Staleness — projects idle for long get boosted
-      // 0 days = 0 pts, 3 days = 3 pts, 7 days = 7 pts, 14+ = 10 pts max
       const stalenessScore = Math.min(10, daysSinceActivity * 0.8);
 
       // 3. Deadline pressure
@@ -130,11 +116,11 @@ export function generateSmartTasks(projects: Project[]): SmartTask[] {
 
       // --- Composite Score ---
       const priorityScore =
-        urgencyScore * 2.0 + // urgency is most important
-        stalenessScore * 1.5 + // stale projects need love
-        deadlineScore * 1.8 + // deadlines matter
-        momentumScore * 0.8 + // finish what's nearly done
-        coldStartScore * 1.0; // start what's new
+        urgencyScore * 2.0 +
+        stalenessScore * 1.5 +
+        deadlineScore * 1.8 +
+        momentumScore * 0.8 +
+        coldStartScore * 1.0;
 
       // --- Determine urgency tier ---
       let urgency: 'now' | 'soon' | 'later' = 'later';
@@ -196,19 +182,12 @@ export function formatDate(ts: number | string): string {
   if (diff < 172800000) return '昨天';
   if (diff < 604800000) return `${Math.floor(diff / 86400000)}天前`;
 
-  return d.toLocaleDateString('zh-CN', {
-    month: 'short',
-    day: 'numeric',
-  });
+  return d.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' });
 }
 
 export function formatFullDate(ts: number | string): string {
   const d = typeof ts === 'string' ? new Date(ts) : new Date(ts);
-  return d.toLocaleDateString('zh-CN', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
+  return d.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
 }
 
 export function daysUntil(dateStr: string | null): number | null {
