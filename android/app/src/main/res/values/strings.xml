@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">一念 Pip</string>
+    <string name="title_activity_main">一念 Pip</string>
+    <string name="package_name">com.momenta.app</string>
+    <string name="custom_url_scheme">com.momenta.app</string>
+</resources>

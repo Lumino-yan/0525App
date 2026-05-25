@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react';
-import type { AppData, Project, Message } from '../lib/types';
+import type { AppData, Project, Message, Thought, ThoughtNote, Task, ThoughtColor, Urgency, AIOrganizeResult } from '../lib/types';
 import {
   getData,
   addProject as storageAddProject,
@@ -8,10 +8,28 @@ import {
   toggleProjectComplete as storageToggleComplete,
   addMessage as storageAddMessage,
   deleteMessage as storageDeleteMessage,
+  addThought as storageAddThought,
+  updateThought as storageUpdateThought,
+  deleteThought as storageDeleteThought,
+  addThoughtNote as storageAddThoughtNote,
+  updateThoughtNote as storageUpdateThoughtNote,
+  deleteThoughtNote as storageDeleteThoughtNote,
+  addTask as storageAddTask,
+  updateTask as storageUpdateTask,
+  deleteTask as storageDeleteTask,
   resetData,
 } from '../lib/storage';
-import { generateSmartTasks, estimateProgress, generateId } from '../lib/engine';
-import { parseMessage as llmParse, hasApiKey } from '../lib/llmService';
+import {
+  generateSmartTasks,
+  estimateProgress,
+  generateId,
+  getTaskProgress,
+} from '../lib/engine';
+import {
+  organizeInbox as llmOrganizeInbox,
+  generateProjectGuidance as llmGenerateProjectGuidance,
+  generateFocusGuidance as llmGenerateFocusGuidance,
+} from '../lib/llmService';
 import type { SmartTask } from '../lib/types';
 
 interface AppContextValue {
@@ -27,6 +45,31 @@ interface AppContextValue {
   resetAll: () => void;
   smartTasks: SmartTask[];
   getProgress: (projectId: string) => number;
+
+  // Thoughts
+  addThought: (content: string, color?: ThoughtColor) => void;
+  updateThought: (id: string, updates: Partial<Thought>) => void;
+  deleteThought: (id: string) => void;
+
+  // ThoughtNotes
+  addThoughtNote: (thoughtId: string, content: string) => void;
+  updateThoughtNote: (id: string, updates: Partial<ThoughtNote>) => void;
+  deleteThoughtNote: (id: string) => void;
+
+  // Tasks
+  addTask: (task: Task) => void;
+  updateTask: (id: string, updates: Partial<Task>) => void;
+  deleteTask: (id: string) => void;
+  toggleTask: (id: string) => void;
+
+  // AI Organization
+  organizeInbox: () => Promise<AIOrganizeResult | null>;
+  createProjectFromThoughts: (name: string, thoughtIds: string[], urgency?: Urgency) => Project;
+  generateFocusGuidance: () => Promise<string | null>;
+  generateProjectGuidance: (projectId: string) => Promise<string | null>;
+
+  // Task progress
+  getTaskProgress: (projectId: string) => number;
 }
 
 const AppContext = createContext<AppContextValue | null>(null);
@@ -44,35 +87,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     return () => window.removeEventListener('storage', handler);
   }, [refresh]);
 
-  // Check for stale projects on app open and generate system alerts
-  useEffect(() => {
-    const now = Date.now();
-    const DAY = 86400000;
-
-    smartTasks
-      .filter((t) => t.urgency === 'now')
-      .forEach((task) => {
-        const projectMessages = data.messages.filter(
-          (m) => m.projectId === task.project.id && m.type === 'alert'
-        );
-        const lastAlertToday = projectMessages.some(
-          (m) => now - m.timestamp < DAY
-        );
-        if (!lastAlertToday) {
-          const icon = task.project.urgency === 'critical' ? '⚡' : '⚠️';
-          const alertMsg: Message = {
-            id: generateId(),
-            projectId: task.project.id,
-            role: 'system',
-            content: `${icon} ${task.reason}。建议：${task.suggestedAction}`,
-            type: 'alert',
-            timestamp: now,
-          };
-          storageAddMessage(alertMsg);
-        }
-      });
-    refresh();
-  }, []); // Run once on mount
+  // ---- Project CRUD ----
 
   const addProject = useCallback((p: Project) => {
     storageAddProject(p);
@@ -94,6 +109,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     refresh();
   }, [refresh]);
 
+  // ---- Message CRUD ----
+
   const addMessage = useCallback((msg: Message) => {
     storageAddMessage(msg);
     refresh();
@@ -108,7 +125,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const projectId = existingProjectId ?? '';
     const timestamp = Date.now();
 
-    // 1. Add user message (optimistic)
     const userMsg: Message = {
       id: generateId(),
       projectId,
@@ -119,11 +135,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     };
     storageAddMessage(userMsg);
 
-    // 2. Generate local optimistic reply
     const project = projectId ? data.projects.find((p) => p.id === projectId) : null;
     const progress = project ? estimateProgress(project) : 0;
 
-    const optimisticReply: Message = {
+    const reply: Message = {
       id: generateId(),
       projectId,
       role: 'assistant',
@@ -132,42 +147,163 @@ export function AppProvider({ children }: { children: ReactNode }) {
       metadata: { progressAfter: progress },
       timestamp: timestamp + 1,
     };
-    storageAddMessage(optimisticReply);
+    storageAddMessage(reply);
     refresh();
+  }, [data.projects, refresh]);
 
-    // 3. Call LLM for enriched reply (if API key available)
-    if (hasApiKey()) {
-      const llmResult = await llmParse(content, {
-        projectId,
-        project: project ?? null,
-        isNewChat: !existingProjectId,
+  // ---- Thought CRUD ----
+
+  const addThought = useCallback((content: string, color?: ThoughtColor) => {
+    const thought: Thought = {
+      id: generateId(),
+      content,
+      color: color ?? null,
+      createdAt: Date.now(),
+      processed: false,
+    };
+    storageAddThought(thought);
+    refresh();
+  }, [refresh]);
+
+  const updateThought = useCallback((id: string, updates: Partial<Thought>) => {
+    storageUpdateThought(id, updates);
+    refresh();
+  }, [refresh]);
+
+  const deleteThought = useCallback((id: string) => {
+    storageDeleteThought(id);
+    refresh();
+  }, [refresh]);
+
+  // ---- ThoughtNote CRUD ----
+
+  const addThoughtNote = useCallback((thoughtId: string, content: string) => {
+    const note: ThoughtNote = {
+      id: generateId(),
+      thoughtId,
+      content,
+      createdAt: Date.now(),
+    };
+    storageAddThoughtNote(note);
+    refresh();
+  }, [refresh]);
+
+  const updateThoughtNote = useCallback((id: string, updates: Partial<ThoughtNote>) => {
+    storageUpdateThoughtNote(id, updates);
+    refresh();
+  }, [refresh]);
+
+  const deleteThoughtNote = useCallback((id: string) => {
+    storageDeleteThoughtNote(id);
+    refresh();
+  }, [refresh]);
+
+  // ---- Task CRUD ----
+
+  const addTask = useCallback((task: Task) => {
+    storageAddTask(task);
+    refresh();
+  }, [refresh]);
+
+  const updateTask = useCallback((id: string, updates: Partial<Task>) => {
+    storageUpdateTask(id, updates);
+    refresh();
+  }, [refresh]);
+
+  const deleteTask = useCallback((id: string) => {
+    storageDeleteTask(id);
+    refresh();
+  }, [refresh]);
+
+  const toggleTask = useCallback((id: string) => {
+    const d = getData();
+    const task = d.tasks.find((t) => t.id === id);
+    if (task) {
+      storageUpdateTask(id, { completed: !task.completed });
+      refresh();
+    }
+  }, [refresh]);
+
+  // ---- AI Organization ----
+
+  const organizeInbox = useCallback(async (): Promise<AIOrganizeResult | null> => {
+    const d = getData();
+    const unprocessed = d.thoughts.filter((t) => !t.processed);
+    if (unprocessed.length === 0) return null;
+
+    const result = await llmOrganizeInbox(unprocessed, d.projects);
+    if (result) {
+      const allIds = new Set([
+        ...result.projectSuggestions.flatMap((s) => s.thoughtIds),
+        ...result.extractedTasks.flatMap((t) => t.thoughtIds),
+      ]);
+      allIds.forEach((id) => storageUpdateThought(id, { processed: true }));
+      refresh();
+    }
+    return result;
+  }, [refresh]);
+
+  const createProjectFromThoughts = useCallback(
+    (name: string, thoughtIds: string[], urgency: Urgency = 'medium'): Project => {
+      const project: Project = {
+        id: generateId(),
+        name,
+        description: '',
+        urgency,
+        deadline: null,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+        completed: false,
+        completedAt: null,
+        manualProgress: null,
+        pinned: false,
+        lastMessagePreview: '',
+        lastMessageAt: Date.now(),
+        tasks: [],
+        aiSummary: '',
+      };
+
+      storageAddProject(project);
+
+      thoughtIds.forEach((tid) => {
+        storageUpdateThought(tid, { projectId: project.id, processed: true });
       });
 
-      if (llmResult && llmResult.intent === 'log' && project) {
-        // Delete optimistic reply, add LLM reply
-        storageDeleteMessage(optimisticReply.id);
-        const llmReply: Message = {
-          id: generateId(),
-          projectId,
-          role: 'assistant',
-          content: llmResult.reply,
-          type: 'suggestion',
-          metadata: {
-            progressAfter: llmResult.extracted.progressEstimate ?? progress,
-            parsedIntent: llmResult.intent,
-          },
-          timestamp: timestamp + 2,
-        };
-        storageAddMessage(llmReply);
-        refresh();
-      }
-    }
-  }, [data.projects, refresh]);
+      refresh();
+      return project;
+    },
+    [refresh],
+  );
+
+  const generateFocusGuidance = useCallback(async (): Promise<string | null> => {
+    const d = getData();
+    return llmGenerateFocusGuidance(d.thoughts, d.projects);
+  }, []);
+
+  const generateProjectGuidance = useCallback(async (projectId: string): Promise<string | null> => {
+    const d = getData();
+    const project = d.projects.find((p) => p.id === projectId);
+    if (!project) return null;
+    return llmGenerateProjectGuidance(project);
+  }, []);
+
+  // ---- Task Progress ----
+
+  const getTaskProgressFn = useCallback((projectId: string) => {
+    const d = getData();
+    const project = d.projects.find((p) => p.id === projectId);
+    if (!project) return 0;
+    return getTaskProgress(project);
+  }, [version]);
+
+  // ---- Reset ----
 
   const resetAll = useCallback(() => {
     resetData();
     refresh();
   }, [refresh]);
+
+  // ---- Legacy progress ----
 
   const getProgress = useCallback((projectId: string) => {
     const project = getData().projects.find((p) => p.id === projectId);
@@ -190,6 +326,21 @@ export function AppProvider({ children }: { children: ReactNode }) {
         resetAll,
         smartTasks,
         getProgress,
+        addThought,
+        updateThought,
+        deleteThought,
+        addThoughtNote,
+        updateThoughtNote,
+        deleteThoughtNote,
+        addTask,
+        updateTask,
+        deleteTask,
+        toggleTask,
+        organizeInbox,
+        createProjectFromThoughts,
+        generateFocusGuidance,
+        generateProjectGuidance,
+        getTaskProgress: getTaskProgressFn,
       }}
     >
       {children}

@@ -1,4 +1,4 @@
-import type { Project, SmartTask, Urgency } from './types';
+import type { Project, SmartTask, Urgency, Thought, Task, ThoughtColor } from './types';
 import { getMessagesForProject } from './storage';
 
 const DAY = 86400000;
@@ -200,3 +200,69 @@ export function daysUntil(dateStr: string | null): number | null {
 export function generateId(): string {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 }
+
+// ---- Task Progress ----
+
+export function getTaskProgress(project: Project): number {
+  if (!project.tasks || project.tasks.length === 0) {
+    return estimateProgress(project);
+  }
+  const completed = project.tasks.filter((t) => t.completed).length;
+  return Math.round((completed / project.tasks.length) * 100);
+}
+
+export function getNextTask(project: Project): Task | null {
+  if (!project.tasks) return null;
+  const sorted = [...project.tasks].sort((a, b) => a.order - b.order);
+  return sorted.find((t) => !t.completed) ?? null;
+}
+
+// ---- Thought Utilities ----
+
+export function formatRelativeTime(ts: number): string {
+  const diff = Date.now() - ts;
+  if (diff < 60000) return '刚刚';
+  if (diff < 3600000) return `${Math.floor(diff / 60000)}分钟前`;
+  if (diff < 86400000) return `${Math.floor(diff / 3600000)}小时前`;
+  if (diff < 172800000) return '昨天';
+  if (diff < 604800000) return `${Math.floor(diff / 86400000)}天前`;
+  return formatDate(ts);
+}
+
+export function groupThoughtsByDate(thoughts: Thought[]): { label: string; items: Thought[] }[] {
+  const groups: { label: string; items: Thought[] }[] = [];
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  const yesterday = today - DAY;
+
+  for (const thought of thoughts) {
+    const thoughtDate = new Date(thought.createdAt);
+    const thoughtDay = new Date(thoughtDate.getFullYear(), thoughtDate.getMonth(), thoughtDate.getDate()).getTime();
+
+    let label: string;
+    if (thoughtDay === today) {
+      label = '今天';
+    } else if (thoughtDay === yesterday) {
+      label = '昨天';
+    } else {
+      label = thoughtDate.toLocaleDateString('zh-CN', { month: 'long', day: 'numeric' });
+    }
+
+    let group = groups.find((g) => g.label === label);
+    if (!group) {
+      group = { label, items: [] };
+      groups.push(group);
+    }
+    group.items.push(thought);
+  }
+
+  return groups;
+}
+
+export const COLOR_MAP: Record<NonNullable<ThoughtColor>, { dot: string; bg: string; label: string }> = {
+  red: { dot: 'bg-[#EF9A9A]', bg: 'bg-[#FFEBEE]', label: '紧急' },
+  orange: { dot: 'bg-[#FFB74D]', bg: 'bg-[#FFF3E0]', label: '待办' },
+  blue: { dot: 'bg-[#81D4FA]', bg: 'bg-[#E3F2FD]', label: '记录' },
+  green: { dot: 'bg-[#9CCC65]', bg: 'bg-[#F1F8E9]', label: '稍后' },
+  purple: { dot: 'bg-[#CE93D8]', bg: 'bg-[#F3E5F5]', label: '灵感' },
+};

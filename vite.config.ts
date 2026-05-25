@@ -18,11 +18,11 @@ export default defineConfig({
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5MB
       },
       manifest: {
-        name: '瞬目纪 MOMENTA',
-        short_name: 'MOMENTA',
-        description: '智能项目管理工具 — 自动追踪进度，智能推荐任务',
-        theme_color: '#7c3aed',
-        background_color: '#f5f5f5',
+        name: '一念 Pip',
+        short_name: 'Pip',
+        description: '一念 Pip — 闪念胶囊的速度 × AI 项目管理的深度',
+        theme_color: '#9CCC65',
+        background_color: '#FFF8E1',
         display: 'standalone',
         orientation: 'portrait',
         start_url: './',
