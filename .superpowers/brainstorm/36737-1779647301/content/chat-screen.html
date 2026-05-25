@@ -1,0 +1,145 @@
+<h2>项目对话页 — 进入单个项目后的聊天界面</h2>
+<p class="subtitle">系统消息（左侧）+ 用户消息（右侧），像微信一样对话。核心差异：系统消息的"主动性"程度。</p>
+
+<div class="split">
+  <!-- Option A: 助手风格（系统消息较多） -->
+  <div class="mockup">
+    <div class="mockup-header">A · 主动型 PM 助手</div>
+    <div class="mockup-body">
+      <div style="background:#ededed;min-height:520px;font-family:-apple-system,sans-serif;max-width:375px;margin:0 auto;display:flex;flex-direction:column;">
+        <!-- Top bar -->
+        <div style="background:#f5f5f5;padding:12px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #e0e0e0;flex-shrink:0;">
+          <span style="font-size:18px;cursor:pointer;">←</span>
+          <div style="flex:1;">
+            <div style="font-size:15px;font-weight:600;">Q3 产品改版</div>
+            <div style="height:2px;background:#e0e0e0;border-radius:1px;width:80px;margin-top:3px;">
+              <div style="width:65%;height:100%;background:#7c3aed;border-radius:1px;"></div>
+            </div>
+          </div>
+          <span style="font-size:11px;color:#7c3aed;font-weight:600;">65%</span>
+        </div>
+        <!-- Chat area -->
+        <div style="flex:1;padding:12px 14px;display:flex;flex-direction:column;gap:10px;overflow-y:auto;">
+          <!-- System proactive -->
+          <div style="display:flex;gap:8px;align-items:flex-start;max-width:85%;">
+            <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#a78bfa);display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;flex-shrink:0;">M</div>
+            <div>
+              <div style="background:#fff;padding:10px 14px;border-radius:4px 16px 16px 16px;font-size:13px;color:#333;line-height:1.5;">早上好！Q3产品改版已经<b>5天</b>没有更新了，上次你完成了用户中心个人信息模块。建议今天推进首页设计。</div>
+              <div style="font-size:10px;color:#999;margin-top:2px;margin-left:4px;">08:32</div>
+            </div>
+          </div>
+          <!-- User reply -->
+          <div style="display:flex;justify-content:flex-end;">
+            <div style="max-width:80%;">
+              <div style="background:#95ec69;padding:10px 14px;border-radius:16px 4px 16px 16px;font-size:13px;color:#000;line-height:1.5;">今天继续做了首页首屏的高保真设计，调整了导航栏</div>
+              <div style="font-size:10px;color:#999;text-align:right;margin-top:2px;margin-right:4px;">11:20</div>
+            </div>
+          </div>
+          <!-- System response -->
+          <div style="display:flex;gap:8px;align-items:flex-start;max-width:85%;">
+            <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#a78bfa);display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;flex-shrink:0;">M</div>
+            <div>
+              <div style="background:#fff;padding:10px 14px;border-radius:4px 16px 16px 16px;font-size:13px;color:#333;line-height:1.5;">已记录进展！<br><br>📊 当前进度 <b>65% → 72%</b><br><br>下一步建议：整理用户中心页面剩余的模块设计。截止日期还有12天，节奏不错。</div>
+              <div style="font-size:10px;color:#999;margin-top:2px;margin-left:4px;">11:20</div>
+            </div>
+          </div>
+          <!-- System 主动提醒 -->
+          <div style="display:flex;gap:8px;align-items:flex-start;max-width:85%;">
+            <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#a78bfa);display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;flex-shrink:0;">M</div>
+            <div>
+              <div style="background:#fff3e0;padding:10px 14px;border-radius:4px 16px 16px 16px;font-size:13px;color:#333;line-height:1.5;">⚠️ 提醒：离截止日还有12天，目前进度偏慢。建议明天完成用户中心所有页面，确保按时交付。</div>
+              <div style="font-size:10px;color:#999;margin-top:2px;margin-left:4px;">15:00</div>
+            </div>
+          </div>
+        </div>
+        <!-- Input bar -->
+        <div style="background:#f5f5f5;padding:8px 12px;display:flex;align-items:center;gap:8px;border-top:1px solid #e0e0e0;flex-shrink:0;">
+          <input placeholder="记录进展..." style="flex:1;height:34px;border:1px solid #ddd;border-radius:17px;padding:0 14px;font-size:13px;outline:none;background:#fff;">
+          <button style="width:34px;height:34px;border-radius:50%;background:#7c3aed;color:#fff;border:none;font-size:16px;display:flex;align-items:center;justify-content:center;">↑</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Option B: 简洁记录风格 -->
+  <div class="mockup">
+    <div class="mockup-header">B · 轻量记录型</div>
+    <div class="mockup-body">
+      <div style="background:#ededed;min-height:520px;font-family:-apple-system,sans-serif;max-width:375px;margin:0 auto;display:flex;flex-direction:column;">
+        <!-- Top bar -->
+        <div style="background:#f5f5f5;padding:12px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #e0e0e0;flex-shrink:0;">
+          <span style="font-size:18px;cursor:pointer;">←</span>
+          <div style="flex:1;">
+            <div style="font-size:15px;font-weight:600;">Q3 产品改版</div>
+            <div style="font-size:10px;color:#999;">12天后截止</div>
+          </div>
+          <div style="background:#7c3aed;color:#fff;font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600;">进行中</div>
+        </div>
+        <!-- Chat area -->
+        <div style="flex:1;padding:12px 14px;display:flex;flex-direction:column;gap:16px;overflow-y:auto;">
+          <!-- Date divider -->
+          <div style="text-align:center;font-size:10px;color:#999;">5月20日</div>
+          <!-- User message -->
+          <div style="display:flex;justify-content:flex-end;">
+            <div style="max-width:82%;">
+              <div style="background:#95ec69;padding:10px 14px;border-radius:16px 4px 16px 16px;font-size:13px;color:#000;line-height:1.5;">用户中心的个人信息模块做完了</div>
+            </div>
+          </div>
+          <!-- System brief -->
+          <div style="display:flex;gap:8px;align-items:flex-start;max-width:85%;">
+            <div style="width:28px;height:28px;border-radius:50%;background:#e8e0f3;display:flex;align-items:center;justify-content:center;color:#7c3aed;font-size:12px;flex-shrink:0;">M</div>
+            <div>
+              <div style="background:#fff;padding:8px 14px;border-radius:4px 14px 14px 14px;font-size:12px;color:#666;line-height:1.5;">已记录 ✓ 进度 65%</div>
+            </div>
+          </div>
+          <!-- Date divider -->
+          <div style="text-align:center;font-size:10px;color:#999;">5月25日</div>
+          <!-- User message -->
+          <div style="display:flex;justify-content:flex-end;">
+            <div style="max-width:82%;">
+              <div style="background:#95ec69;padding:10px 14px;border-radius:16px 4px 16px 16px;font-size:13px;color:#000;line-height:1.5;">搞定了首页首屏的高保真稿</div>
+            </div>
+          </div>
+          <!-- System brief -->
+          <div style="display:flex;gap:8px;align-items:flex-start;max-width:85%;">
+            <div style="width:28px;height:28px;border-radius:50%;background:#e8e0f3;display:flex;align-items:center;justify-content:center;color:#7c3aed;font-size:12px;flex-shrink:0;">M</div>
+            <div>
+              <div style="background:#fff;padding:8px 14px;border-radius:4px 14px 14px 14px;font-size:12px;color:#666;line-height:1.5;">已记录 ✓ 进度 72% · 下一步：用户中心其他模块</div>
+            </div>
+          </div>
+        </div>
+        <!-- Input bar -->
+        <div style="background:#f5f5f5;padding:8px 12px;display:flex;align-items:center;gap:8px;border-top:1px solid #e0e0e0;flex-shrink:0;">
+          <span style="font-size:20px;">🎤</span>
+          <input placeholder="说点什么..." style="flex:1;height:34px;border:1px solid #ddd;border-radius:17px;padding:0 14px;font-size:13px;outline:none;background:#fff;">
+          <span style="font-size:20px;">😊</span>
+          <button style="width:34px;height:34px;border-radius:50%;background:#7c3aed;color:#fff;border:none;font-size:16px;display:flex;align-items:center;justify-content:center;">↑</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>主动型 PM 助手</h3>
+      <p>系统像真正的 PM 一样主动发消息：早上打招呼、提醒进度、建议下一步。系统消息和用户消息同等分量，对话感强。高风险的提醒有视觉差异（橙色背景）。</p>
+    </div>
+  </div>
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>轻量记录型</h3>
+      <p>系统退后一步，仅做确认和简短提示。更像"日志 + 轻反馈"。用户消息是主角，系统消息精简短小。更安静，不那么打扰。</p>
+    </div>
+  </div>
+  <div class="option" data-choice="both" onclick="toggleSelect(this)">
+    <div class="letter">?</div>
+    <div class="content">
+      <h3>混合：可以调节</h3>
+      <p>系统的主动程度可通过设置调节——工作模式（多提醒）和专注模式（少打扰）</p>
+    </div>
+  </div>
+</div>

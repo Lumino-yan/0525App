@@ -1,0 +1,133 @@
+<h2>首页消息列表 — 3 种设计方向</h2>
+<p class="subtitle">每个项目 = 一个聊天会话，系统主动推送消息。点击进入对话。</p>
+
+<div class="split">
+  <!-- Option A: 纯微信风格 -->
+  <div class="mockup">
+    <div class="mockup-header">A · 纯微信风格</div>
+    <div class="mockup-body">
+      <div style="background:#ededed;min-height:500px;font-family:-apple-system,sans-serif;max-width:375px;margin:0 auto;">
+        <!-- Header -->
+        <div style="background:#ededed;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #d9d9d9;">
+          <span style="font-size:17px;font-weight:600;color:#000;">Momenta</span>
+          <span style="font-size:24px;color:#000;">+</span>
+        </div>
+        <!-- Chat rows -->
+        <div style="background:#fff;cursor:pointer;padding:12px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #f0f0f0;">
+          <div style="width:48px;height:48px;border-radius:8px;background:linear-gradient(135deg,#7c3aed,#a78bfa);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:16px;flex-shrink:0;">Q3</div>
+          <div style="flex:1;min-width:0;">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-size:16px;font-weight:500;color:#000;">Q3 产品改版</span>
+              <span style="font-size:11px;color:#b0b0b0;">14:32</span>
+            </div>
+            <div style="font-size:13px;color:#999;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">已5天未更新，建议推进首页设计</div>
+          </div>
+          <div style="width:18px;height:18px;border-radius:50%;background:#f44336;color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</div>
+        </div>
+        <div style="background:#fff;cursor:pointer;padding:12px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #f0f0f0;">
+          <div style="width:48px;height:48px;border-radius:8px;background:linear-gradient(135deg,#f59e0b,#fbbf24);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:16px;flex-shrink:0;">客</div>
+          <div style="flex:1;min-width:0;">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-size:16px;font-weight:500;color:#000;">客户提案：新能源</span>
+              <span style="font-size:11px;color:#b0b0b0;">09:15</span>
+            </div>
+            <div style="font-size:13px;color:#f44336;margin-top:2px;">3天后截止，建议优先处理</div>
+          </div>
+          <div style="width:18px;height:18px;border-radius:50%;background:#f44336;color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</div>
+        </div>
+        <div style="background:#fff;cursor:pointer;padding:12px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #f0f0f0;">
+          <div style="width:48px;height:48px;border-radius:8px;background:linear-gradient(135deg,#22c55e,#4ade80);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:16px;flex-shrink:0;">品</div>
+          <div style="flex:1;min-width:0;">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-size:16px;font-weight:500;color:#000;">品牌手册设计</span>
+              <span style="font-size:11px;color:#b0b0b0;">周一</span>
+            </div>
+            <div style="font-size:13px;color:#999;margin-top:2px;">持续跟进中</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Option B: 混合卡片风格 -->
+  <div class="mockup">
+    <div class="mockup-header">B · 微信骨架 + 进度可见</div>
+    <div class="mockup-body">
+      <div style="background:#f5f5f5;min-height:500px;font-family:-apple-system,sans-serif;max-width:375px;margin:0 auto;">
+        <!-- Header -->
+        <div style="background:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #e5e5e5;">
+          <span style="font-size:17px;font-weight:600;color:#111;">Momenta</span>
+          <span style="font-size:22px;color:#7c3aed;">+</span>
+        </div>
+        <!-- Cards with progress -->
+        <div style="padding:8px 12px;">
+          <div style="background:#fff;border-radius:12px;padding:14px;margin-bottom:8px;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+              <div style="width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,#7c3aed,#a78bfa);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:15px;">Q3</div>
+              <div style="flex:1;">
+                <div style="font-size:15px;font-weight:600;color:#111;">Q3 产品改版</div>
+                <div style="font-size:11px;color:#f44336;">5天未更新 · 建议推进</div>
+              </div>
+              <div style="width:20px;height:20px;border-radius:50%;background:#f44336;color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;">2</div>
+            </div>
+            <div style="height:3px;background:#e5e5e5;border-radius:2px;overflow:hidden;">
+              <div style="width:65%;height:100%;background:linear-gradient(90deg,#7c3aed,#a78bfa);border-radius:2px;"></div>
+            </div>
+            <div style="font-size:10px;color:#999;text-align:right;margin-top:2px;">65%</div>
+          </div>
+          <div style="background:#fff;border-radius:12px;padding:14px;margin-bottom:8px;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+              <div style="width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,#ef4444,#f87171);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:15px;">客</div>
+              <div style="flex:1;">
+                <div style="font-size:15px;font-weight:600;color:#111;">客户提案：新能源</div>
+                <div style="font-size:11px;color:#ef4444;">3天后截止 · 优先处理</div>
+              </div>
+              <div style="width:20px;height:20px;border-radius:50%;background:#ef4444;color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;">1</div>
+            </div>
+            <div style="height:3px;background:#e5e5e5;border-radius:2px;overflow:hidden;">
+              <div style="width:30%;height:100%;background:linear-gradient(90deg,#f59e0b,#fbbf24);border-radius:2px;"></div>
+            </div>
+            <div style="font-size:10px;color:#999;text-align:right;margin-top:2px;">30%</div>
+          </div>
+          <div style="background:#fff;border-radius:12px;padding:14px;margin-bottom:8px;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+              <div style="width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,#22c55e,#4ade80);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:15px;">品</div>
+              <div style="flex:1;">
+                <div style="font-size:15px;font-weight:600;color:#111;">品牌手册设计</div>
+                <div style="font-size:11px;color:#999;">持续跟进中</div>
+              </div>
+            </div>
+            <div style="height:3px;background:#e5e5e5;border-radius:2px;overflow:hidden;">
+              <div style="width:50%;height:100%;background:linear-gradient(90deg,#22c55e,#4ade80);border-radius:2px;"></div>
+            </div>
+            <div style="font-size:10px;color:#999;text-align:right;margin-top:2px;">50%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>纯微信风格</h3>
+      <p>极致简洁，完全模仿微信消息列表。最后一条系统消息作为预览，红点提示数量。无进度条。</p>
+    </div>
+  </div>
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>微信骨架 + 进度可见</h3>
+      <p>保留聊天列表的感觉，但卡片化的行内嵌了进度条和完成百分比，一眼能看到每个项目的推进状态。</p>
+    </div>
+  </div>
+  <div class="option" data-choice="custom" onclick="toggleSelect(this)">
+    <div class="letter">?</div>
+    <div class="content">
+      <h3>我有其他想法</h3>
+      <p>你可以在终端描述你想要的样子</p>
+    </div>
+  </div>
+</div>
