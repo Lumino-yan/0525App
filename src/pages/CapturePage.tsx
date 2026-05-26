@@ -105,7 +105,7 @@ export default function CapturePage() {
       <>
         {/* Sticky urgent section — 冻结在最上方 */}
         {activeUrgent.length > 0 && (
-          <div className="sticky top-[52px] z-20 bg-[#FFF8E1] pb-2 px-4 pt-1 -mt-1 border-b border-[#E8D5B0]/50">
+          <div className="sticky top-[52px] z-20 bg-[#FFF8E1] pb-2 px-4 pt-3 border-b border-[#E8D5B0]/50">
             <div className="flex items-center gap-1.5 mb-2">
               <Zap size={13} className="text-[#FFB74D]" />
               <h2 className="text-xs text-[#8D6E63] font-medium uppercase tracking-wider">需要立即关注</h2>
