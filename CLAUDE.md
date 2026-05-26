@@ -114,6 +114,23 @@ npx vite            # 开发服务器（端口 3000）
 
 **注意**：`npm run build` 会先执行 `tsc -b` 再 `vite build`，类型错误会导致构建失败。
 
+### Android APK 构建
+
+```bash
+# 环境变量（每次新终端 session 需要设置）
+export JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home
+export ANDROID_HOME=/opt/homebrew/share/android-commandlinetools
+
+# 构建
+npx cap sync android
+cd android && ./gradlew assembleDebug
+
+# APK 输出位置
+# android/app/build/outputs/apk/debug/app-debug.apk
+```
+
+**依赖**：`openjdk@21`、`android-commandlinetools`、`android-platform-tools`（均通过 Homebrew 安装）。SDK 组件（platform-tools, build-tools, platforms）由 Gradle 自动下载。
+
 ## Git 规范
 
 ```bash

@@ -8,6 +8,7 @@ dist-ssr
 # Capacitor
 .capacitor/
 android/app/build/
+android/local.properties
 *.apk
 *.aab
 
