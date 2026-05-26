@@ -1,3 +1,21 @@
+# Dependencies
+node_modules
+
+# Build output
+dist
+dist-ssr
+
+# Capacitor
+.capacitor/
+android/app/build/
+*.apk
+*.aab
+
+# Environment
+.env
+.env.local
+.env.*.local
+
 # Logs
 logs
 *.log
@@ -7,12 +25,7 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
-
-# Editor directories and files
+# Editor
 .vscode/*
 !.vscode/extensions.json
 .idea
@@ -22,4 +35,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-.env
+
+# OS
+Thumbs.db
+*.local

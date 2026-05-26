@@ -114,6 +114,26 @@ npx vite            # 开发服务器（端口 3000）
 
 **注意**：`npm run build` 会先执行 `tsc -b` 再 `vite build`，类型错误会导致构建失败。
 
+## Git 规范
+
+```bash
+# 提交前必须验证编译通过
+npx tsc -b
+
+# Commit message 格式：中文 + conventional commits
+# feat: 新功能
+# fix: 修复
+# style: 样式/UI 调整
+# refactor: 重构
+```
+
+**规则**：
+- 所有 commit message 使用中文
+- 直接提交到 `main` 分支（单人项目）
+- 不要 force push
+- 不要使用 `--no-verify` 跳过检查
+- `.gitignore` 已覆盖 node_modules、dist、.env、Android 构建产物、IDE 文件
+
 ## 常见问题
 
 1. **未使用的 import** — tsc 会报 TS6133 错误。删除未使用的 import 即可。
