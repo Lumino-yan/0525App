@@ -9,12 +9,8 @@ import type { ThoughtColor } from '../lib/types';
 import { getStoredConfig, setLLMConfig, clearLLMConfig, type LLMProvider, type LLMConfig } from '../lib/llmService';
 import { resetData } from '../lib/storage';
 import {
-  Settings,
   ListTodo,
-  Inbox,
-  FolderKanban,
   Zap,
-  Layers,
   RotateCcw,
   Trash2,
   Key,
@@ -22,6 +18,10 @@ import {
   Cpu,
   Globe,
   Server,
+  Sparkles,
+  Lightbulb,
+  Star,
+  Coffee,
 } from 'lucide-react';
 
 const PROVIDER_INFO: Record<LLMProvider, { name: string; desc: string; placeholder: string }> = {
@@ -105,7 +105,7 @@ export default function CapturePage() {
       <>
         {/* Sticky urgent section — 冻结在最上方 */}
         {activeUrgent.length > 0 && (
-          <div className="sticky top-0 z-20 bg-[#FFF8E1] pb-2 px-4 pt-1 -mt-1 border-b border-[#E8D5B0]/50">
+          <div className="sticky top-[52px] z-20 bg-[#FFF8E1] pb-2 px-4 pt-1 -mt-1 border-b border-[#E8D5B0]/50">
             <div className="flex items-center gap-1.5 mb-2">
               <Zap size={13} className="text-[#FFB74D]" />
               <h2 className="text-xs text-[#8D6E63] font-medium uppercase tracking-wider">需要立即关注</h2>
@@ -132,7 +132,7 @@ export default function CapturePage() {
         {inboxThoughts.length > 0 && (
           <div className="mt-4">
             <h2 className="px-4 text-xs text-[#8D6E63] font-medium mb-1 uppercase tracking-wider flex items-center gap-1.5">
-              <Inbox size={12} />
+              <Sparkles size={12} className="text-[#FFB74D]" />
               收件箱
               <span className="w-4 h-4 rounded-full bg-[#C8E6C9] text-[10px] text-[#2E7D32] font-bold flex items-center justify-center ml-1">
                 {inboxThoughts.length}
@@ -140,6 +140,7 @@ export default function CapturePage() {
             </h2>
             <InboxList
               thoughts={inboxThoughts}
+              variant="inbox"
               onThoughtTap={(t) => navigate(`/thought/${t.id}`)}
               onThoughtLongPress={(t) => {
                 if (window.confirm('删除这条念头？')) deleteThought(t.id);
@@ -150,7 +151,8 @@ export default function CapturePage() {
 
         {/* All thoughts */}
         <div className="mt-4 pb-4">
-          <h2 className="px-4 text-xs text-[#8D6E63] font-medium mb-1 uppercase tracking-wider">
+          <h2 className="px-4 text-xs text-[#8D6E63] font-medium mb-1 uppercase tracking-wider flex items-center gap-1.5">
+            <Lightbulb size={12} className="text-[#FFB74D]" />
             所有念头
           </h2>
           <InboxList
@@ -174,7 +176,7 @@ export default function CapturePage() {
         {/* Active projects */}
         <div>
           <h2 className="text-xs text-[#8D6E63] font-medium mb-2 uppercase tracking-wider flex items-center gap-1.5">
-            <Layers size={12} />
+            <Zap size={12} className="text-[#FFB74D]" />
             进行中
             <span className="w-4 h-4 rounded-full bg-[#9CCC65] text-[10px] text-[#2E7D32] font-bold flex items-center justify-center">
               {active.length}
@@ -182,11 +184,11 @@ export default function CapturePage() {
           </h2>
           {active.length === 0 ? (
             <div className="text-center py-8">
-              <div className="w-14 h-14 rounded-3xl bg-[#C8E6C9] flex items-center justify-center mx-auto mb-3">
-                <FolderKanban size={24} className="text-[#689F38]" />
+              <div className="w-16 h-16 rounded-3xl bg-[#FFECB3] flex items-center justify-center mx-auto mb-3 shadow-sm">
+                <Sparkles size={28} className="text-[#FFB74D]" />
               </div>
               <p className="text-sm text-[#8D6E63]">还没有项目</p>
-              <p className="text-xs text-[#A1887F] mt-1">记录一些念头后，AI 可以帮你创建项目</p>
+              <p className="text-xs text-[#A1887F] mt-1">记录一些念头后，AI 帮你整理创建</p>
               <button
                 onClick={() => navigate('/review')}
                 className="mt-3 inline-flex items-center gap-1.5 px-4 py-2 bg-[#9CCC65] text-[#4E342E] text-xs font-medium rounded-2xl hover:bg-[#8BC34A] transition-colors"
@@ -211,7 +213,9 @@ export default function CapturePage() {
         {/* Completed */}
         {completed.length > 0 && (
           <div>
-            <h2 className="text-xs text-[#8D6E63] font-medium mb-2 uppercase tracking-wider">已完成</h2>
+            <h2 className="text-xs text-[#8D6E63] font-medium mb-2 uppercase tracking-wider flex items-center gap-1.5">
+              <Star size={12} className="text-[#FFB74D]" />
+              已完成</h2>
             <div className="space-y-2 opacity-60">
               {completed.map((p) => (
                 <ProjectCard
@@ -394,6 +398,7 @@ export default function CapturePage() {
         <div>
           <h1 className="text-lg font-bold text-[#4E342E] tracking-tight flex items-center gap-2">
             一念
+            <Sparkles size={14} className="text-[#FFB74D]" />
             <span className="text-[10px] font-normal text-[#8D6E63] bg-[#F5E6C8] px-1.5 py-0.5 rounded-full">Pip</span>
           </h1>
           <p className="text-[11px] text-[#8D6E63] -mt-0.5">
@@ -432,9 +437,9 @@ export default function CapturePage() {
       {/* Bottom Tab Bar */}
       <div className="bg-[#FFFBEF] border-t border-[#E8D5B0] flex items-center justify-around px-2 pt-1 pb-[env(safe-area-inset-bottom,8px)]">
         {[
-          { id: 'thoughts' as TabId, label: '念头', icon: Inbox },
-          { id: 'projects' as TabId, label: '项目', icon: FolderKanban },
-          { id: 'settings' as TabId, label: '设置', icon: Settings },
+          { id: 'thoughts' as TabId, label: '念头', icon: Lightbulb },
+          { id: 'projects' as TabId, label: '项目', icon: Star },
+          { id: 'settings' as TabId, label: '设置', icon: Coffee },
         ].map((t) => {
           const Icon = t.icon;
           const active = tab === t.id;
