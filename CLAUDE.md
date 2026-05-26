@@ -134,6 +134,17 @@ npx tsc -b
 - 不要使用 `--no-verify` 跳过检查
 - `.gitignore` 已覆盖 node_modules、dist、.env、Android 构建产物、IDE 文件
 
+## 敏感数据检查
+
+**每次提交前必须确认以下内容不在仓库中：**
+- 真实 API Key（所有代码中仅用占位符 `sk-ant-...`、`sk-...`）
+- `.env` 文件内容（文件本身已 gitignore，仅 `.env.example` 保留占位符）
+- Android keystore（`.jks`、`.keystore`）
+- 个人身份信息（手机号、身份证号、真实地址等）
+- 第三方服务的 client secret / token
+
+**种子数据规则**：`storage.ts` 中的 `seedDemoData()` 只能包含虚构的示例项目、任务、念头。所有 demo 数据需明显是示例性质（如 "Q3 产品改版"、"品牌手册设计" 这类泛化名称）。
+
 ## 常见问题
 
 1. **未使用的 import** — tsc 会报 TS6133 错误。删除未使用的 import 即可。
